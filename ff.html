@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -187,7 +188,7 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 console.log('Register SUCCESS!', userCredential.user.uid);
                 // Create wallet for new user
-                await set(ref(db, `users/${userCredential.user.uid}/wallet`), 0);
+                await set(ref(db, users/${userCredential.user.uid}/wallet), 0);
                 alert('Registration successful! You are now logged in.');
             } catch (error) {
                 console.error('Register error:', error.code, error.message);
@@ -211,7 +212,7 @@
         }
 
         function listenToWallet() {
-            const userWalletRef = ref(db, `users/${currentUser.uid}/wallet`);
+            const userWalletRef = ref(db, users/${currentUser.uid}/wallet);
             onValue(userWalletRef, (snapshot) => {
                 userWallet = snapshot.val() || 0;
                 walletBalanceEl.textContent = userWallet.toFixed(2);
@@ -219,7 +220,7 @@
         }
 
         function listenToSettings() {
-            const settingsRef = ref(db, `settings/isWalletDisabled`);
+            const settingsRef = ref(db, settings/isWalletDisabled);
             onValue(settingsRef, (snapshot) => {
                 isWalletSystemDisabled = snapshot.val() === true;
             });
@@ -269,7 +270,7 @@
         });
 
         async function showDetailsModal(accountId) {
-            const accountRef = ref(db, `accounts/${accountId}`);
+            const accountRef = ref(db, accounts/${accountId});
             const snapshot = await get(accountRef);
             if (!snapshot.exists()) {
                 alert("This account is no longer available.");
@@ -295,9 +296,9 @@
             }
 
             const buttonsContainer = document.getElementById('modal-buttons');
-            let buttonsHtml = `<a href="${data.contactLink}" target="_blank" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Contact Owner</a>`;
+            let buttonsHtml = <a href="${data.contactLink}" target="_blank" class="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Contact Owner</a>;
             if (!isWalletSystemDisabled || userWallet >= data.price) {
-                buttonsHtml += `<button data-id="${accountId}" class="buy-btn w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Buy Now (₹${data.price})</button>`;
+                buttonsHtml += <button data-id="${accountId}" class="buy-btn w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Buy Now (₹${data.price})</button>;
             }
             buttonsContainer.innerHTML = buttonsHtml;
             
@@ -314,7 +315,7 @@
         async function handleBuy(accountId) {
             if (!confirm("Are you sure you want to buy this account?")) return;
 
-            const accountRef = ref(db, `accounts/${accountId}`);
+            const accountRef = ref(db, accounts/${accountId});
             const accountSnapshot = await get(accountRef);
             if (!accountSnapshot.exists()) {
                 alert("This account is no longer available.");
@@ -328,7 +329,7 @@
             }
 
             const newBalance = userWallet - accountData.price;
-            await set(ref(db, `users/${currentUser.uid}/wallet`), newBalance);
+            await set(ref(db, users/${currentUser.uid}/wallet), newBalance);
             await remove(accountRef);
 
             closeModal('details-modal');
@@ -351,8 +352,8 @@
                 return;
             }
 
-            const requestId = `req_${Date.now()}`;
-            const requestRef = ref(db, `depositRequests/${requestId}`);
+            const requestId = req_${Date.now()};
+            const requestRef = ref(db, depositRequests/${requestId});
             set(requestRef, {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
